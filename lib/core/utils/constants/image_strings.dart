@@ -107,5 +107,6 @@ class ImageStrings {
   static const String noRecord = "assets/images/no_record.png";
   static const String user = "assets/images/user.jpg";
   static const String orderImage = "assets/images/orderImage.png";
+  static const String riveIntro = "assets/rive/golf_driver.riv";
 
 }

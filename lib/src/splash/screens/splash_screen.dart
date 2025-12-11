@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:rive/rive.dart';
 import 'package:social_golf_app/core/di/injection_container_common.dart';
 import 'package:social_golf_app/core/shared_pref/constants.dart';
 import 'package:social_golf_app/core/shared_pref/preferences_utils.dart';
@@ -55,19 +56,16 @@ class _SplashScreenState extends State<SplashScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(ImageStrings.splashBgImage),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(ImageStrings.logo, height: 150, width: 150),
-              ],
+        backgroundColor: Colors.white,
+        body: Center(
+          child: SizedBox(
+            height: 300,
+            width: 300,
+            child: const RiveAnimation.asset(
+              ImageStrings.riveIntro,
+              fit: BoxFit.contain,
+              // If your Rive file has a specific animation name, specify it here:
+              // animations: ['Swing'],
             ),
           ),
         ),
