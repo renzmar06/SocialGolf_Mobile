@@ -96,7 +96,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/icons/authIcons/
     - assets/images/
+    - assets/images/onBoardingImages/
+    - assets/images/splashImages/
     # - assets/lotties/
     - assets/rive/
 

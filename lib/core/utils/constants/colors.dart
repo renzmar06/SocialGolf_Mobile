@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ColorConstants{
+class ColorConstants {
   ColorConstants._();
 
   static const Color yellow = Color(0xFFFDC040);
@@ -20,10 +20,9 @@ class ColorConstants{
   static const Color btnGrey = Color(0xFFEEEEF1);
   static const Color chatBotGreyBg = Color(0xFFF5F5F5);
 
-  static const Color  btnColor = Color(0xFF4E5140);
-  static const Color  btnColor2 = Color(0xFFFF002D);
-  static const Color  btnColor3 = Color(0xFFEEEEF1);
-
+  static const Color btnColor = Color(0xFF1B5E20);
+  static const Color btnColor2 = Color(0xFFFF002D);
+  static const Color btnColor3 = Color(0xFFEEEEF1);
 
   static Color headerColor = Color(0xFF8C906D).withOpacity(0.6);
 
@@ -49,11 +48,9 @@ class ColorConstants{
   static Color paymentStatus = Color(0xFFFF0000);
   static Color paymentMode = Color(0xFF1759CD);
 
-
   static Color blueShade = Color(0xFFEBEFFF);
   static Color yellowBorderColor = Color(0xFF8C906D);
   // static Color dismissColor = Color(0xFFFF6979).withOpacity(0.8);
-
 
   static Color divider = Color(0xFFE0E0E5);
 
@@ -67,11 +64,4 @@ class ColorConstants{
   static Color statusPendingAffiliate = Color(0xFFFFA500);
 
   static Color redChatBg = Color(0xFFFFECEF);
-
-
-
-
-
-
-
 }

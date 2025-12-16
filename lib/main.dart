@@ -1,6 +1,7 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -87,7 +88,7 @@ Future<void> main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  static void setLocale(BuildContext context, Locale newLocale) {
+  static void setLocales(BuildContext context, Locale newLocale) {
     var state = context.findAncestorStateOfType<_MyAppState>();
     state?.setLocale(newLocale);
   }
@@ -189,7 +190,7 @@ class _MyAppState extends State<MyApp> {
         bottom: true,
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          title: 'Herafeen',
+          title: 'Social Golf',
           theme: AppTheme.lightTheme,
           routerConfig: router,
           builder: EasyLoading.init(
