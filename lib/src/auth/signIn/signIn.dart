@@ -23,7 +23,7 @@ class SignInScreen extends StatelessWidget {
       child: BlocConsumer<SignInBloc, SignInState>(
         listener: (context, state) {
           if (state.status == ResponseStatus.success) {
-            context.push('/bottom-navigation');
+            context.go('/bottom-navigation');
           } else if (state.status == ResponseStatus.failure &&
               state.errorMessage != null) {
             ScaffoldMessenger.of(

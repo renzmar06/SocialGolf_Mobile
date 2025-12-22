@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_golf_app/core/utils/constants/colors.dart';
 import 'post_text_field.dart';
+import '../bloc/create_post_bloc.dart';
+import '../bloc/create_post_event.dart';
+import '../bloc/create_post_state.dart';
 
 class FindPlayersPostContent extends StatelessWidget {
   const FindPlayersPostContent({super.key});
@@ -10,7 +14,6 @@ class FindPlayersPostContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final courseNameController = TextEditingController();
     final teeTimeController = TextEditingController();
-    final playersNeededController = TextEditingController();
     final detailsController = TextEditingController();
 
     return Column(
@@ -76,7 +79,7 @@ class FindPlayersPostContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Players Needed',
+                    'Players Needed (1-3)',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade700,
@@ -84,41 +87,59 @@ class FindPlayersPostContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TextField(
-                    controller: playersNeededController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(1),
-                    ],
-                    decoration: InputDecoration(
-                      hintText: '1',
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 14,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: ColorConstants.btnColor,
-                          width: 1.5,
+                  BlocBuilder<CreatePostBloc, CreatePostState>(
+                    builder: (context, state) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                    ),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: state.playersNeeded > 1
+                                  ? () {
+                                      context.read<CreatePostBloc>().add(
+                                        const DecrementPlayersEvent(),
+                                      );
+                                    }
+                                  : null,
+                              icon: Icon(
+                                Icons.remove,
+                                color: state.playersNeeded > 1
+                                    ? ColorConstants.btnColor
+                                    : Colors.grey.shade400,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                state.playersNeeded.toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: state.playersNeeded < 3
+                                  ? () {
+                                      context.read<CreatePostBloc>().add(
+                                        const IncrementPlayersEvent(),
+                                      );
+                                    }
+                                  : null,
+                              icon: Icon(
+                                Icons.add,
+                                color: state.playersNeeded < 3
+                                    ? ColorConstants.btnColor
+                                    : Colors.grey.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

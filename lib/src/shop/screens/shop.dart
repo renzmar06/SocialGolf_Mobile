@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_golf_app/core/common/widgets/common_app_bar.dart';
 import '../widgets/shop_search_bar.dart';
 import '../widgets/shop_category_filter.dart';
 import '../widgets/shop_view_toggle.dart';
@@ -13,9 +14,8 @@ class ShopScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Marketplace'),
-        elevation: 0,
+      appBar: const CommonAppBar(
+        title: 'Marketplace',
         automaticallyImplyLeading: false,
       ),
       body: Column(

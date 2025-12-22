@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_golf_app/core/utils/constants/colors.dart';
 import 'package:social_golf_app/core/common/widgets/common_text_field.dart';
+import 'package:social_golf_app/core/common/widgets/common_app_bar.dart';
 import '../widgets/people_tab.dart';
 import '../widgets/trending_tab.dart';
 import '../widgets/events_tab.dart';
@@ -16,9 +17,8 @@ class ExploreScreen extends StatelessWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Explore'),
-          elevation: 0,
+        appBar: CommonAppBar(
+          title: 'Explore',
           automaticallyImplyLeading: false,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(120),
