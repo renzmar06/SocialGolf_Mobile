@@ -54,7 +54,7 @@ class ExploreScreen extends StatelessWidget {
                     Tab(icon: Icon(Icons.people), text: 'People'),
                     Tab(icon: Icon(Icons.trending_up), text: 'Trending'),
                     Tab(icon: Icon(Icons.event), text: 'Events'),
-                    Tab(icon: Icon(Icons.groups), text: 'Groups'),
+                    Tab(icon: Icon(Icons.groups), text: 'GroupsList'),
                   ],
                 ),
               ],

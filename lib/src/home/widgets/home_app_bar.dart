@@ -31,14 +31,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const SizedBox(width: 12),
-          const Text(
-            'Social Golf',
-            style: TextStyle(
-              color: ColorConstants.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          // const Text(
+          //   'Social Golf',
+          //   style: TextStyle(
+          //     color: ColorConstants.black,
+          //     fontSize: 20,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
         ],
       ),
       actions: [

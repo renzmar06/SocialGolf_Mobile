@@ -1,12 +1,17 @@
 import 'package:social_golf_app/core/bloc/base_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container_common.dart';
+import '../../../../core/network/network_call/domain/repository/auth_repository.dart';
+import '../../../../core/shared_pref/preferences_utils.dart';
 import 'sign_up_event.dart';
 import 'sign_up_state.dart';
 import '../../../../core/utils/constants/enums.dart';
 
 class SignUpBloc extends BaseBloc<SignUpEvent, SignUpState> {
-  SignUpBloc() : super(const SignUpState()) {
+  final AuthRepository authRepository;
+  final pref = serviceLocator<PreferencesUtil>();
+  SignUpBloc({required this.authRepository}) : super(const SignUpState()) {
     on<EmailChanged>(_onEmailChanged);
     on<PasswordChanged>(_onPasswordChanged);
     on<ConfirmPasswordChanged>(_onConfirmPasswordChanged);
@@ -226,6 +231,8 @@ class SignUpBloc extends BaseBloc<SignUpEvent, SignUpState> {
       //   },
       // );
 
+      // await pref.saveLoginData(data);
+      print("Sign up success");
       // Temporary success for testing
       await Future.delayed(const Duration(seconds: 2));
       emit(state.copyWith(status: ResponseStatus.success));
@@ -239,4 +246,5 @@ class SignUpBloc extends BaseBloc<SignUpEvent, SignUpState> {
       );
     }
   }
+
 }

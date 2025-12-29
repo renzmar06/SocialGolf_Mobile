@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:social_golf_app/core/common/widgets/common_text_field.dart';
 import 'package:social_golf_app/core/common/widgets/custom_button.dart';
 import 'package:social_golf_app/core/utils/constants/colors.dart';
+import '../../../core/di/injection_container_common.dart';
 import 'bloc/sign_up_bloc.dart';
 import 'bloc/sign_up_event.dart';
 import 'bloc/sign_up_state.dart';
@@ -19,7 +20,7 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SignUpBloc(),
+      create: (context) => serviceLocator<SignUpBloc>(),
       child: BlocConsumer<SignUpBloc, SignUpState>(
         listener: (context, state) {
           if (state.status == ResponseStatus.success) {

@@ -7,8 +7,27 @@ import '../bloc/create_post_event.dart';
 import '../bloc/create_post_state.dart';
 import 'post_text_field.dart';
 
-class PhotoPostContent extends StatelessWidget {
+class PhotoPostContent extends StatefulWidget {
   const PhotoPostContent({super.key});
+
+  @override
+  State<PhotoPostContent> createState() => _PhotoPostContentState();
+}
+
+class _PhotoPostContentState extends State<PhotoPostContent> {
+  late final TextEditingController _captionController;
+
+  @override
+  void initState() {
+    super.initState();
+    _captionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _captionController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
     try {
@@ -20,246 +39,172 @@ class PhotoPostContent extends StatelessWidget {
         imageQuality: 85,
       );
 
-      if (image != null && context.mounted) {
+      if (image != null && mounted) {
         context.read<CreatePostBloc>().add(AddImageEvent(File(image.path)));
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking image: $e')),
+        );
       }
     }
   }
 
-  void _showImageSourceDialog(BuildContext context) {
+  void _showImageSourceDialog(BuildContext blocContext) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.photo_camera),
-                  title: const Text('Take Photo'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage(context, ImageSource.camera);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Choose from Gallery'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage(context, ImageSource.gallery);
-                  },
-                ),
-              ],
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 16),
+            const Text(
+              'Select Image Source',
+              style:  TextStyle(fontWeight: FontWeight. bold, fontSize: 16),
             ),
-          ),
-        );
-      },
+            const SizedBox(height: 8),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration:  BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius. circular(10),
+                ),
+                child: Icon(Icons.photo_camera, color: Colors.green. shade700),
+              ),
+              title:  const Text('Take Photo'),
+              subtitle: const Text('Use your camera'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickImage(blocContext, ImageSource. camera);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color:  Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.photo_library, color: Colors. blue.shade700),
+              ),
+              title: const Text('Choose from Gallery'),
+              subtitle:  const Text('Select from your photos'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickImage(blocContext, ImageSource.gallery);
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final captionController = TextEditingController();
-
     return BlocBuilder<CreatePostBloc, CreatePostState>(
       builder: (context, state) {
+        // Check if we have an image
+        final hasImage = state.selectedImages.isNotEmpty;
+
         return Column(
           children: [
-            // Upload photo area
+            // --- IMAGE SELECTION AREA ---
             GestureDetector(
+              // If there's an image, tapping it opens the picker to CHANGE the photo
               onTap: () => _showImageSourceDialog(context),
               child: Container(
-                height: 200,
+                height: 250, // Increased height for better single photo visibility
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    style: BorderStyle.solid,
-                    width: 2,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300, width: 2),
                 ),
-                child: state.selectedImages.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.cloud_upload_outlined,
-                              size: 48,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Upload a photo',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'PNG, JPG up to 10MB',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              state.selectedImages[0],
-                              width: double.infinity,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Row(
-                                children: [
-                                  if (state.selectedImages.length > 1)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        '+${state.selectedImages.length - 1}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  const SizedBox(width: 8),
-                                  CircleAvatar(
-                                    backgroundColor: Colors.black54,
-                                    radius: 16,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.close,
-                                        size: 16,
-                                        color: Colors.white,
-                                      ),
-                                      padding: EdgeInsets.zero,
-                                      onPressed: () {
-                                        context.read<CreatePostBloc>().add(
-                                          const RemoveImageEvent(0),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                child: !hasImage
+                    ? _buildPlaceholder()
+                    : _buildMainImage(state.selectedImages[0]),
               ),
             ),
 
-            // Additional images gallery
-            if (state.selectedImages.length > 1) ...<Widget>[
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 80,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: state.selectedImages.length - 1,
-                  itemBuilder: (context, index) {
-                    final imageIndex = index + 1;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              state.selectedImages[imageIndex],
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            top: 4,
-                            right: 4,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              radius: 12,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  size: 12,
-                                  color: Colors.white,
-                                ),
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  context.read<CreatePostBloc>().add(
-                                    RemoveImageEvent(imageIndex),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-
-            // Add more photos button
-            if (state.selectedImages.isNotEmpty &&
-                state.selectedImages.length < 10) ...<Widget>[
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => _showImageSourceDialog(context),
-                icon: const Icon(Icons.add_photo_alternate_outlined),
-                label: const Text('Add More Photos'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.grey.shade700,
-                  side: BorderSide(color: Colors.grey.shade300),
-                ),
-              ),
-            ],
-
             const SizedBox(height: 16),
 
-            // Caption field
+            // --- CAPTION FIELD ---
             PostTextField(
-              controller: captionController,
+              controller: _captionController,
               hintText: 'Write a caption...',
               maxLines: 4,
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey),
+        SizedBox(height: 8),
+        Text('Upload a photo', style: TextStyle(fontWeight: FontWeight.w500)),
+        Text('Tap to select', style: TextStyle(color: Colors.grey, fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildMainImage(File file) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.file(
+            file,
+            key: ValueKey(file.path),
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+          ),
+        ),
+        // Overlaid change indicator
+        Positioned(
+          bottom: 8,
+          right: 8,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.edit, color: Colors.white, size: 14),
+                SizedBox(width: 4),
+                Text('Change', style: TextStyle(color: Colors.white, fontSize: 12)),
+              ],
+            ),
+          ),
+        ),
+        // Remove button
+        Positioned(
+          top: 8,
+          right: 8,
+          child: GestureDetector(
+            onTap: () => context.read<CreatePostBloc>().add(const RemoveImageEvent(0)),
+            child: const CircleAvatar(
+              radius: 14,
+              backgroundColor: Colors.black54,
+              child: Icon(Icons.close, size: 16, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

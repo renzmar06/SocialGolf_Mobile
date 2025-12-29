@@ -42,9 +42,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(Duration(milliseconds: duration), () {
       final pref = serviceLocator<PreferencesUtil>();
-      final prefShowHome = pref.getBoolPreferencesData(Constants.prefShowHome);
+      final prefShowHome = pref.getBoolPreferencesData(Constants.prefIsLoggedIn);
+
+      print("prefShowHome: $prefShowHome");
       if (prefShowHome) {
-        context.go('/bottom-navbar', extra: {'initialIndex': 0});
+        context.go('/bottom-navigation', extra: {'initialIndex': 0});
       } else {
         context.go('/onboarding');
       }

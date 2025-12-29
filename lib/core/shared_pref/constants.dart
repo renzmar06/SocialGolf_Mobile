@@ -20,7 +20,9 @@ class Constants {
 
   static String prefShowHome = 'ShowHome';
   static String prefIsLoggedIn = 'isLoggedIn';
+  static String prefIsisActive = 'isActive';
   static String prefInternetCheck = 'InternetCheck';
+  static String prefRole = 'role';
 
   // static String termConditionURL = 'https://pay10.ae/terms-of-service/';
   // static String privacyPolicyURL = 'https://pay10.ae/privacy-policy/';

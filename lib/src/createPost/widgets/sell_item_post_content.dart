@@ -7,8 +7,34 @@ import '../bloc/create_post_event.dart';
 import '../bloc/create_post_state.dart';
 import 'post_text_field.dart';
 
-class SellItemPostContent extends StatelessWidget {
+class SellItemPostContent extends StatefulWidget {
   const SellItemPostContent({super.key});
+
+  @override
+  State<SellItemPostContent> createState() => _SellItemPostContentState();
+}
+
+class _SellItemPostContentState extends State<SellItemPostContent> {
+  // Controllers ko initState mein define kiya taki data clear na ho
+  late final TextEditingController itemNameController;
+  late final TextEditingController priceController;
+  late final TextEditingController descriptionController;
+
+  @override
+  void initState() {
+    super.initState();
+    itemNameController = TextEditingController();
+    priceController = TextEditingController();
+    descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    itemNameController.dispose();
+    priceController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
     try {
@@ -20,66 +46,80 @@ class SellItemPostContent extends StatelessWidget {
         imageQuality: 85,
       );
 
-      if (image != null && context.mounted) {
+      if (image != null && mounted) {
         context.read<CreatePostBloc>().add(AddImageEvent(File(image.path)));
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking image: $e')),
+        );
       }
     }
   }
 
-  void _showImageSourceDialog(BuildContext context) {
+  void _showImageSourceDialog(BuildContext blocContext) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.photo_camera),
-                  title: const Text('Take Photo'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage(context, ImageSource.camera);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Choose from Gallery'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage(context, ImageSource.gallery);
-                  },
-                ),
-              ],
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 16),
+            const Text(
+              'Select Image Source',
+              style:  TextStyle(fontWeight: FontWeight. bold, fontSize: 16),
             ),
-          ),
-        );
-      },
+            const SizedBox(height: 8),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration:  BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius. circular(10),
+                ),
+                child: Icon(Icons.photo_camera, color: Colors.green. shade700),
+              ),
+              title:  const Text('Take Photo'),
+              subtitle: const Text('Use your camera'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickImage(blocContext, ImageSource. camera);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color:  Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.photo_library, color: Colors. blue.shade700),
+              ),
+              title: const Text('Choose from Gallery'),
+              subtitle:  const Text('Select from your photos'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickImage(blocContext, ImageSource.gallery);
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final itemNameController = TextEditingController();
-    final priceController = TextEditingController();
-    final descriptionController = TextEditingController();
-
     return BlocBuilder<CreatePostBloc, CreatePostState>(
       builder: (context, state) {
         return Column(
           children: [
-            // Upload item photo area
+            // --- MAIN IMAGE BOX ---
             GestureDetector(
               onTap: () => _showImageSourceDialog(context),
               child: Container(
@@ -87,105 +127,16 @@ class SellItemPostContent extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    style: BorderStyle.solid,
-                    width: 2,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300, width: 2),
                 ),
                 child: state.selectedImages.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_photo_alternate_outlined,
-                              size: 48,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Add item photo',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Tap to select image',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              state.selectedImages[0],
-                              width: double.infinity,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Row(
-                                children: [
-                                  if (state.selectedImages.length > 1)
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        '+${state.selectedImages.length - 1}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  const SizedBox(width: 8),
-                                  CircleAvatar(
-                                    backgroundColor: Colors.black54,
-                                    radius: 16,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.close,
-                                        size: 16,
-                                        color: Colors.white,
-                                      ),
-                                      padding: EdgeInsets.zero,
-                                      onPressed: () {
-                                        context.read<CreatePostBloc>().add(
-                                          const RemoveImageEvent(0),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    ? _buildPlaceholder()
+                    : _buildMainPreview(state),
               ),
             ),
 
-            // Additional images gallery
-            if (state.selectedImages.length > 1) ...<Widget>[
+            // --- HORIZONTAL GALLERY (For extra photos) ---
+            if (state.selectedImages.length > 1) ...[
               const SizedBox(height: 12),
               SizedBox(
                 height: 80,
@@ -194,86 +145,32 @@ class SellItemPostContent extends StatelessWidget {
                   itemCount: state.selectedImages.length - 1,
                   itemBuilder: (context, index) {
                     final imageIndex = index + 1;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              state.selectedImages[imageIndex],
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            top: 4,
-                            right: 4,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              radius: 12,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  size: 12,
-                                  color: Colors.white,
-                                ),
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  context.read<CreatePostBloc>().add(
-                                    RemoveImageEvent(imageIndex),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                    return _buildGalleryItem(state, imageIndex);
                   },
                 ),
               ),
             ],
 
-            // Add more photos button
-            if (state.selectedImages.isNotEmpty &&
-                state.selectedImages.length < 5) ...<Widget>[
+            // --- ADD MORE BUTTON ---
+            if (state.selectedImages.isNotEmpty && state.selectedImages.length < 5) ...[
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () => _showImageSourceDialog(context),
                 icon: const Icon(Icons.add_photo_alternate_outlined),
                 label: const Text('Add More Photos'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.grey.shade700,
-                  side: BorderSide(color: Colors.grey.shade300),
-                ),
               ),
             ],
 
             const SizedBox(height: 16),
-
-            // Item name
-            PostTextField(
-              controller: itemNameController,
-              hintText: 'Item name',
-            ),
+            PostTextField(controller: itemNameController, hintText: 'Item name'),
             const SizedBox(height: 12),
-
-            // Price
             PostTextField(
               controller: priceController,
               hintText: 'Price',
               keyboardType: TextInputType.number,
-              prefixIcon: Icon(
-                Icons.attach_money,
-                size: 20,
-                color: Colors.grey.shade600,
-              ),
+              prefixIcon: const Icon(Icons.attach_money, size: 20),
             ),
             const SizedBox(height: 12),
-
-            // Description
             PostTextField(
               controller: descriptionController,
               hintText: 'Item description...',
@@ -282,6 +179,65 @@ class SellItemPostContent extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  // UI Helpers
+  Widget _buildPlaceholder() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add_photo_alternate_outlined, size: 48, color: Colors.grey),
+          Text('Add item photo', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainPreview(CreatePostState state) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.file(state.selectedImages[0], fit: BoxFit.cover),
+          Positioned(
+            top: 8, right: 8,
+            child: CircleAvatar(
+              backgroundColor: Colors.black54,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 18),
+                onPressed: () => context.read<CreatePostBloc>().add(const RemoveImageEvent(0)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGalleryItem(CreatePostState state, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.file(state.selectedImages[index], width: 80, height: 80, fit: BoxFit.cover),
+          ),
+          Positioned(
+            top: 4, right: 4,
+            child: GestureDetector(
+              onTap: () => context.read<CreatePostBloc>().add(RemoveImageEvent(index)),
+              child: const CircleAvatar(
+                radius: 10, backgroundColor: Colors.black54,
+                child: Icon(Icons.close, size: 12, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

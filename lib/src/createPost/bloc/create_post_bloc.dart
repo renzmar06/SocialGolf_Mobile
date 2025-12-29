@@ -36,22 +36,33 @@ class CreatePostBloc extends BaseBloc<CreatePostEvent, CreatePostState> {
   void _onChangeTab(ChangeTabEvent event, Emitter<CreatePostState> emit) {
     emit(state.copyWith(selectedTabIndex: event.tabIndex));
   }
-
   void _onAddImage(AddImageEvent event, Emitter<CreatePostState> emit) {
-    final updatedImages = List<File>.from(state.selectedImages);
-    updatedImages.add(event.image);
-    emit(state.copyWith(selectedImages: updatedImages));
+    // Purani images ki copy lo aur nayi image add karo
+    final List<File> updatedImages = List<File>.from(state.selectedImages);
+
+    if (state.selectedTabIndex == 0) {
+      // Single Photo Post ke liye: Replace karo
+      emit(state.copyWith(selectedImages: [event.image]));
+    } else {
+      // Sell Item ke liye: Add karo (max 5)
+      if (updatedImages.length < 5) {
+        updatedImages.add(event.image);
+        emit(state.copyWith(selectedImages: updatedImages));
+      }
+    }
   }
 
   void _onRemoveImage(RemoveImageEvent event, Emitter<CreatePostState> emit) {
-    final updatedImages = List<File>.from(state.selectedImages);
-    if (event.index < updatedImages.length) {
+    final List<File> updatedImages = List<File>.from(state.selectedImages);
+
+    // Specific index waali image remove karo
+    if (event.index >= 0 && event.index < updatedImages.length) {
       updatedImages.removeAt(event.index);
       emit(state.copyWith(selectedImages: updatedImages));
     }
   }
-
   void _onClearImages(ClearImagesEvent event, Emitter<CreatePostState> emit) {
     emit(state.copyWith(selectedImages: []));
   }
+
 }

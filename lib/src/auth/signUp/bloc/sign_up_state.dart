@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/network/network_call/data/model/login_response.dart';
 import '../../../../core/utils/constants/enums.dart';
 
 class SignUpState extends Equatable {
@@ -13,6 +14,7 @@ class SignUpState extends Equatable {
   final bool isFormValid;
   final ResponseStatus status;
   final String? errorMessage;
+
 
   const SignUpState({
     this.email = '',
@@ -40,6 +42,7 @@ class SignUpState extends Equatable {
     bool? isFormValid,
     ResponseStatus? status,
     String? errorMessage,
+
   }) {
     return SignUpState(
       email: email ?? this.email,
@@ -54,6 +57,7 @@ class SignUpState extends Equatable {
       isFormValid: isFormValid ?? this.isFormValid,
       status: status ?? this.status,
       errorMessage: errorMessage,
+
     );
   }
 

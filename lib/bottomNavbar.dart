@@ -33,8 +33,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
     //   child: Text('Create Post Screen', style: TextStyle(fontSize: 24)),
     // ),
     CreatePostScreen(),
-    const Center(child: Text('Shop Screen', style: TextStyle(fontSize: 24))),
-    // ShopScreen(),
+    // const Center(child: Text('Shop Screen', style: TextStyle(fontSize: 24))),
+    ShopScreen(),
     const Center(child: Text('Profile Screen', style: TextStyle(fontSize: 24))),
   ];
 

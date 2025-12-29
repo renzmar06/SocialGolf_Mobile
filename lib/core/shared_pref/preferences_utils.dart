@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../logger/app_logger.dart';
+import '../network/network_call/data/model/login_response.dart';
+import 'constants.dart';
 
 class PreferencesUtil {
   final SharedPreferences preferences;
@@ -78,6 +80,23 @@ class PreferencesUtil {
     } else {
       await preferences.clear();
       logger.i('$runtimeType   clearPreferencesData CLEARED ALL');
+    }
+  }
+
+  Future<void> saveLoginData(LoginResponse data) async {
+    logger.i("Saving login data...");
+
+    await setPreferencesData(Constants.accessToken, data.token);
+
+    final user = data.user;
+    if (user != null) {
+      await setPreferencesData(Constants.preCustomerIdKey, user.id);
+      await setPreferencesData(Constants.prefNameKey, user.name);
+      await setPreferencesData(Constants.prefEmailAddressKey, user.email);
+      await setPreferencesData(Constants.prefRole, user.role);
+
+      await setBoolPreferencesData(Constants.prefIsLoggedIn, true);
+      await setBoolPreferencesData(Constants.prefIsisActive, user.isActive);
     }
   }
 }

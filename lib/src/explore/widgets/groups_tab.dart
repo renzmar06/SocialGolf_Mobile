@@ -12,7 +12,7 @@ class GroupsTab extends StatelessWidget {
           Icon(Icons.groups, size: 64, color: Colors.grey),
           SizedBox(height: 16),
           Text(
-            'Golf Groups',
+            'Golf GroupsList',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
         ],

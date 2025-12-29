@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:social_golf_app/core/utils/constants/colors.dart';
 import 'package:social_golf_app/core/common/widgets/custom_button.dart';
 
@@ -43,7 +44,7 @@ class ShopEmptyState extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: CustomButton(
               onPressed: () {
-                // Navigate to create listing screen
+                context.push('/CreateListing');
               },
               backgroundColor: ColorConstants.btnColor,
               btnText: 'Create Listing',

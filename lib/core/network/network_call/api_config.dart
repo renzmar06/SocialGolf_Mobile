@@ -80,6 +80,13 @@ class ApiConfig {
   String get updateFcmToken => '$domain/api/updateFcmToken';
   String get markReadNotification => '$domain/api/';
 
+
+
+
+
+
+  String get login => '$domain/auth/login';
+
 }
 
 String commonDeviceID = "";
@@ -98,7 +105,7 @@ extension APIEnvironmentDomain on APIEnvironment {
     switch (this) {
       case APIEnvironment.development:
         // return "http://65.21.185.41:555/api";
-        return "https://herafeen.com";
+        return "https://social-golf-web.vercel.app/api";
         // return "https://devherafeen.hiredev.org";
       case APIEnvironment.staging:
         return "";

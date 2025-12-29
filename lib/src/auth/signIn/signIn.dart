@@ -5,6 +5,7 @@ import 'package:social_golf_app/core/common/widgets/common_text_field.dart';
 import 'package:social_golf_app/core/common/widgets/custom_button.dart';
 import 'package:social_golf_app/core/utils/constants/colors.dart';
 import 'package:social_golf_app/core/utils/constants/image_strings.dart';
+import '../../../core/di/injection_container_common.dart';
 import 'bloc/sign_in_bloc.dart';
 import 'bloc/sign_in_event.dart';
 import 'bloc/sign_in_state.dart';
@@ -19,7 +20,7 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SignInBloc(),
+      create: (context) => serviceLocator<SignInBloc>(),
       child: BlocConsumer<SignInBloc, SignInState>(
         listener: (context, state) {
           if (state.status == ResponseStatus.success) {
@@ -28,7 +29,7 @@ class SignInScreen extends StatelessWidget {
               state.errorMessage != null) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage!),backgroundColor: Colors.red,));
           }
         },
         builder: (context, state) {
@@ -193,8 +194,25 @@ class SignInScreen extends StatelessWidget {
                   vertical: 16,
                 ),
               ),
-
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      context.push('/forgot-password');
+                    },
+                    child: Text(
+                      'Forgot password?',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: ColorConstants.grey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 22),
 
               // Sign In Button
               state.status == ResponseStatus.loading
@@ -279,24 +297,9 @@ class SignInScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
-
-              // Forgot Password and Sign Up
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      context.push('/forgot-password');
-                    },
-                    child: Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: ColorConstants.grey,
-                      ),
-                    ),
-                  ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Need an account? ',
@@ -320,9 +323,6 @@ class SignInScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
-              ),
-
               const SizedBox(height: 32),
             ],
           ),
